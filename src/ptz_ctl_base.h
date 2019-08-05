@@ -5,7 +5,21 @@
 #include <iostream>
 
 
+enum PTZ_CHANNEL_SELECT
+{
+	PTZ_PAN = 0,
+	PTZ_TILT = 1,
+	PTZ_ZOOM = 2,
+	PTZ_MAX_CHANNEL = 3,
+	
+};
 
+enum PTZ_DIM_SELECT
+{
+	PTZ_POSITION_DIM = 0,
+	PTZ_SPEED_DIM = 1,
+	PTZ_MAX_DIM = 2,
+};
 
 
 class ptz_ctl_base

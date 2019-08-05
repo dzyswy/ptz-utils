@@ -183,13 +183,70 @@ int ptz_ctl_visca::get_focus_position(float *focus_position)
 
 
 
+int ptz_ctl_visca::add_sample(int dim, int ch, float first, float second)
+{
+	if ((dim >= PTZ_MAX_DIM) || (ch >= PTZ_MAX_CHANNEL))
+		return -1;
+	
+	fit_samples_[dim][ch].push_back(make_pair(first, second));
+	return 0;
+}
 
 
 
+int ptz_ctl_visca::calc_fit_para(vector<pair<float, float> > &samples, vector<float> &para_p, vector<float> &para_n, int degree)
+{
+	int sample_num = samples.size();
+	float *first = new float [sample_num];
+	float *second = new float [sample_num];
+	
+	for (int i = 0; i < sample_num; i++)
+	{
+		fisrt[i] = samples[i].first;
+		second[i] = samples[i].second;
+	}	
+	
+	Polynomial pf_p;
+	pf_p.setAttribute(degree, false, 1.0);
+	pf_p.setSample(first, second, sample_num, false, NULL);
+	if (!pf_p.process()) {
+		delete first;
+		delete second;
+		return -1;
+	}
+	pf_p.print();
+	
+	Polynomial pf_n;
+	pf_n.setAttribute(degree, false, 1.0);
+	pf_n.setSample(second, first, sample_num, false, NULL);
+	if (!pf_n.process()) {
+		delete first;
+		delete second;
+		return -1;
+	}
+	pf_n.print();
+	
+	para_p.clear();
+	para_n.clear();
+	for (int i = 0; i < degree; i++)
+	{
+		para_p.push_back(pf_p.getResult(i));
+		para_n.push_back(pf_n.getResult(i));
+	}	
+	
+	return 0;
+}
 
-
-
-
+float ptz_ctl_visca::calc_fit_value(vector<float> &para, float x)
+{
+	int degree = para.size() - 1;
+	double sum = para[para.size() - 1];
+	for (int i = 0; i < degree; i++)
+	{
+		sum += pow(x, degree - i) * para[i];
+	}
+	return (float)sum;
+}
 
 
 
