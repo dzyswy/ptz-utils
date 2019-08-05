@@ -1,0 +1,12 @@
+digraph class {
+	rankdir=BT;
+	node [shape = "record", fontname = "Consolas"] 
+	edge [arrowhead = "empty", fontname = "Consolas"]
+	
+
+	ptz_ctl_visca [label = "{ptz_ctl_visca | #pan_speed: int \l#tilt_speed: int \l#zoom_speed: int \l#min_pan_speed: int \l#max_pan_speed: int \l#min_tilt_speed: int \l#max_tilt_speed: int \l#min_zoom_speed: int \l#max_zoom_speed: int \l | \l}"] 
+	
+
+	 
+	
+}
