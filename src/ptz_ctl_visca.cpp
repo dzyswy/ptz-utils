@@ -1,14 +1,23 @@
 #include "ptz_ctl_visca.h"
 #include <libvisca/libvisca.h>
 
+
+
 ptz_ctl_visca::ptz_ctl_visca()
 {
+	pan_speed_ = 8;
+	tilt_speed_ = 6;
+	zoom_speed_ = 1;
 	
-	config_default_parameter();
+	min_pan_speed_ = 1;
+	max_pan_speed_ = 24;
+	min_tilt_speed_ = 1;
+	max_tilt_speed_ = 20;
+	min_zoom_speed_ = 0;
+	max_zoom_speed_ = 7;
 	
 	interface_ = new VISCACamera_t;
 	camera = new VISCACamera_t;
-	
 }
 
 ptz_ctl_visca::~ptz_ctl_visca()
@@ -17,6 +26,8 @@ ptz_ctl_visca::~ptz_ctl_visca()
 	delete interface_;
 	
 }
+
+
 
 int ptz_ctl_visca::open_device(const char *dev_name) 
 {
@@ -48,209 +59,171 @@ int ptz_ctl_visca::close_device()
 	
 
 	
-int ptz_ctl_visca::set_pantilt_left(float pan_speed = -1) 
+int ptz_ctl_visca::set_pantilt_left(int pan_speed) 
 {
-	if (pan_speed > 0)
-		set_pan_speed(pan_speed);
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = tilt_speed_;
+	
 	if (VISCA_set_pantilt_left(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
 		return -1;
 	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_right(float pan_speed = -1) 
+int ptz_ctl_visca::set_pantilt_right(int pan_speed) 
 {
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = tilt_speed_;
 	
+	if (VISCA_set_pantilt_right(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_up(float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_up(int tilt_speed) 
 {
+	int panSpeed = pan_speed_;
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
 	
+	if (VISCA_set_pantilt_up(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_down(float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_down(int tilt_speed) 
 {
+	int panSpeed = pan_speed_;
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
 	
+	if (VISCA_set_pantilt_down(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_upleft(float pan_speed = -1, float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_upleft(int pan_speed, int tilt_speed) 
 {
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
 	
+	if (VISCA_set_pantilt_upleft(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_upright(float pan_speed = -1, float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_upright(int pan_speed, int tilt_speed) 
 {
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
 	
+	if (VISCA_set_pantilt_upright(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_downleft(float pan_speed = -1, float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_downleft(int pan_speed, int tilt_speed) 
 {
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
 	
+	if (VISCA_set_pantilt_downleft(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 }
  
-int ptz_ctl_visca::set_pantilt_downright(float pan_speed = -1, float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_downright(int pan_speed, int tilt_speed) 
 {
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
 	
+	if (VISCA_set_pantilt_downright(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
 int ptz_ctl_visca::set_pantilt_stop() 
 {
+	int panSpeed = pan_speed_;
+	int tiltSpeed = tilt_speed_;
 	
+	if (VISCA_set_pantilt_stop(interface_, camera, panSpeed, tiltSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 	
-int ptz_ctl_visca::set_pantilt_absolute_position(float pan_position, float tilt_position, float pan_speed = -1, float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_absolute_position(int pan_position, int tilt_position, int pan_speed, int tilt_speed) 
 {
-	
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
+	if (VISCA_set_pantilt_absolute_position(&interface_, &camera, panSpeed, tiltSpeed, pan_position, tilt_position) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_pantilt_relative_position(float pan_position, float tilt_position, float pan_speed = -1, float tilt_speed = -1) 
+int ptz_ctl_visca::set_pantilt_relative_position(int pan_position, int tilt_position, int pan_speed, int tilt_speed) 
 {
-	
+	int panSpeed = gen_valid_pan_speed(pan_speed);
+	int tiltSpeed = gen_valid_tilt_speed(tilt_speed);
+	if (VISCA_set_pantilt_relative_position(&interface_, &camera, panSpeed, tiltSpeed, pan_position, tilt_position) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
 int ptz_ctl_visca::set_pantilt_home() 
 {
-	
+	if (VISCA_set_pantilt_home(&interface_, &camera) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 	
-int ptz_ctl_visca::set_zoom_tele(float zoom_speed = -1) 
+int ptz_ctl_visca::set_zoom_tele(int zoom_speed) 
 {
-	
+	int zoomSpeed = gen_valid_zoom_speed(zoom_speed);
+	if (VISCA_set_zoom_tele_speed(&interface_, &camera, zoomSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
-int ptz_ctl_visca::set_zoom_wide(float zoom_speed = -1) 
+int ptz_ctl_visca::set_zoom_wide(int zoom_speed) 
 {
-	
-} 
-
-int ptz_ctl_visca::set_zoom_absolute_position(float zoom_position, float zoom_speed = -1) 
-{
-	
+	int zoomSpeed = gen_valid_zoom_speed(zoom_speed);
+	if (VISCA_set_zoom_wide_speed(&interface_, &camera, zoomSpeed) != VISCA_SUCCESS)
+		return -1;
+	return 0;
 } 
 
 int ptz_ctl_visca::set_zoom_stop() 
 {
-	
-} 
-	
-	
-int ptz_ctl_visca::set_focus_near(float focus_speed) 
-{
-	
-} 
-
-int ptz_ctl_visca::set_focus_far(float focus_speed) 
-{
-	
-}
- 
-int ptz_ctl_visca::set_focus_absolute_position(float focus_position, float focus_speed = -1) 
-{
-	
-} 
-
-int ptz_ctl_visca::set_focus_stop() 
-{
-	
-} 
-	
-int ptz_ctl_visca::get_pan_position(float *pan_position) 
-{
-	
-}
- 
-int ptz_ctl_visca::get_tilt_position(float *tilt_position) 
-{
-	
-} 
-
-int ptz_ctl_visca::get_pantilt_position(float *pan_position, float *tilt_position) 
-{
-	
-} 
-
-int ptz_ctl_visca::get_zoom_position(float *zoom_position) 
-{
-	
-} 
-
-int ptz_ctl_visca::get_focus_position(float *focus_position) 
-{
-	
-} 
-
-
-
-
-
-
-int ptz_ctl_visca::add_sample(int dim, int ch, float first, float second)
-{
-	if ((dim >= PTZ_MAX_DIM) || (ch >= PTZ_MAX_CHANNEL))
+	if (VISCA_set_zoom_stop(&interface_, &camera) != VISCA_SUCCESS)
 		return -1;
-	
-	fit_samples_[dim][ch].push_back(make_pair(first, second));
 	return 0;
-}
+} 
 
 
-
-int ptz_ctl_visca::calc_fit_para(vector<pair<float, float> > &samples, vector<float> &para_p, vector<float> &para_n, int degree)
+int ptz_ctl_visca::set_zoom_absolute_position(int zoom_position, int zoom_speed) 
 {
-	int sample_num = samples.size();
-	float *first = new float [sample_num];
-	float *second = new float [sample_num];
-	
-	for (int i = 0; i < sample_num; i++)
-	{
-		fisrt[i] = samples[i].first;
-		second[i] = samples[i].second;
-	}	
-	
-	Polynomial pf_p;
-	pf_p.setAttribute(degree, false, 1.0);
-	pf_p.setSample(first, second, sample_num, false, NULL);
-	if (!pf_p.process()) {
-		delete first;
-		delete second;
+	if (VISCA_set_zoom_value(&interface_, &camera, zoom_position) != VISCA_SUCCESS)
 		return -1;
-	}
-	pf_p.print();
-	
-	Polynomial pf_n;
-	pf_n.setAttribute(degree, false, 1.0);
-	pf_n.setSample(second, first, sample_num, false, NULL);
-	if (!pf_n.process()) {
-		delete first;
-		delete second;
-		return -1;
-	}
-	pf_n.print();
-	
-	para_p.clear();
-	para_n.clear();
-	for (int i = 0; i < degree; i++)
-	{
-		para_p.push_back(pf_p.getResult(i));
-		para_n.push_back(pf_n.getResult(i));
-	}	
-	
 	return 0;
-}
-
-float ptz_ctl_visca::calc_fit_value(vector<float> &para, float x)
+} 
+	
+	
+int ptz_ctl_visca::get_pantilt_position(int *pan_position, int *tilt_position) 
 {
-	int degree = para.size() - 1;
-	double sum = para[para.size() - 1];
-	for (int i = 0; i < degree; i++)
-	{
-		sum += pow(x, degree - i) * para[i];
-	}
-	return (float)sum;
-}
+	short panPosition = 0, tiltPosition = 0;
+	if (VISCA_get_pantilt_position(&interface_, &camera, (int16_t *)&panPosition, (int16_t *)&tiltPosition) != VISCA_SUCCESS)
+		return -1;
+	*pan_position = panPosition;
+	*tilt_position = tiltPosition;
+	return 0;
+} 
 
-
-
-
+int ptz_ctl_visca::get_zoom_position(int *zoom_position) 
+{
+	uint16_t zoomPosition;
+	if (VISCA_get_zoom_value(&interface_, &camera, (uint16_t *)zoomPosition) != VISCA_SUCCESS)
+		return -1;
+	*zoom_position = zoomPosition;
+	return 0;
+} 
 
 
 
