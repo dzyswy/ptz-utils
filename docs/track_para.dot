@@ -1,0 +1,12 @@
+digraph track_para {
+	no_object [label = "{no object}"]
+	signal_object [label = "{signal object}"]
+	multi_object [label = "{multi objects}"]
+	
+	no_object -> signal_object [label = "min_hit_=0.5s, max_miss_ = 1s"]
+	no_object -> multi_object [label = "min_hit_=0.5s, max_miss_ = 1s"]
+	signal_object -> no_object [label = "min_hit_=1s, max_miss_ = 2s"]
+	signal_object -> multi_object [label = "min_hit_=1s, max_miss_ = 2s"]
+	multi_object -> no_object [label = "min_hit_=2s, max_miss_ = 1s"]
+	multi_object -> signal_object [label = "min_hit_=2s, max_miss_ = 1s"]
+}

@@ -1,0 +1,11 @@
+digraph track_state {
+	init [lable = "{init}"] 
+	track [lable = "{track}"] 
+	lost [lable = "{lost}"] 
+	inactive [lable = "{inactive}"] 
+
+	init -> track [label = "3"]
+	track -> lost [label = "3"]
+	lost -> track [label = "1"]
+	lost -> inactive [label = "10"]
+}

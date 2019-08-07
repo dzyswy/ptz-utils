@@ -9,7 +9,7 @@ digraph class {
 	stereo_sensor [label = "{stereo_sensor}"] 
 	daemon_stereo [label = "{daemon_stereo}"] 
 	
-	stereo_director [label = "{stereo_director}"] 
+	stereo_filter [label = "{stereo_filter}"] 
 	
 	fit_calib [label = "{fit_calib}"] 
 	
@@ -18,15 +18,15 @@ digraph class {
 	qt_gui [label = "{qt_gui}"]
 	
 	daemon_stereo -> stereo_sensor [arrowhead="normal", style="normal"]
-	stereo_director -> daemon_stereo [arrowhead="normal", style="dashed"]
+	stereo_filter -> daemon_stereo [arrowhead="normal", style="dashed"]
 	fit_calib -> daemon_stereo [arrowhead="normal", style="dashed"]
 	fit_calib -> ptz_ctl_visca [arrowhead="normal", style="dashed"]
-	ptz_track -> stereo_director [arrowhead="normal", style="dashed"]
+	ptz_track -> stereo_filter [arrowhead="normal", style="dashed"]
 	ptz_track -> ptz_ctl_visca [arrowhead="normal", style="dashed"]
 	ptz_track -> fit_calib [arrowhead="normal", style="dashed"]
 	qt_gui -> ptz_ctl_visca [arrowhead="normal", style="dashed"]
 	qt_gui -> daemon_stereo [arrowhead="normal", style="dashed"]
-	qt_gui -> stereo_director [arrowhead="normal", style="dashed"]
+	qt_gui -> stereo_filter [arrowhead="normal", style="dashed"]
 	qt_gui -> fit_calib [arrowhead="normal", style="dashed"]
 	qt_gui -> ptz_track [arrowhead="normal", style="dashed"]
 }
