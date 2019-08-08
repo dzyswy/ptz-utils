@@ -3,10 +3,10 @@ digraph track_para {
 	signal_object [label = "{signal object}"]
 	multi_object [label = "{multi objects}"]
 	
-	no_object -> signal_object [label = "min_hit_=0.5s, max_miss_ = 1s"]
-	no_object -> multi_object [label = "min_hit_=0.5s, max_miss_ = 1s"]
-	signal_object -> no_object [label = "min_hit_=1s, max_miss_ = 2s"]
-	signal_object -> multi_object [label = "min_hit_=1s, max_miss_ = 2s"]
-	multi_object -> no_object [label = "min_hit_=2s, max_miss_ = 1s"]
-	multi_object -> signal_object [label = "min_hit_=2s, max_miss_ = 1s"]
+	no_object -> signal_object [label = "fast"]
+	no_object -> multi_object [label = "fast"]
+	signal_object -> no_object [label = "slow"]
+	signal_object -> multi_object [label = "slow"]
+	multi_object -> no_object [label = "slow"]
+	multi_object -> signal_object [label = "slow"]
 }
