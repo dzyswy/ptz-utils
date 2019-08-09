@@ -3,8 +3,11 @@
 
 
 
-class stream_receiver;
-class camera_command;
+#include "stream_receiver.h"
+#include "camera_command.h"
+
+
+
 
 class stereo_sensor
 {

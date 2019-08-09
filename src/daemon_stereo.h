@@ -1,12 +1,9 @@
-
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 
-class stream_receiver;
-class camera_command;
-
+#include "stereo_sensor.h"
 
 
 class daemon_stereo
@@ -15,13 +12,13 @@ public:
 	daemon_stereo();
 	int connect_device(const char *ip, int stream_port, int cmd_port, int stream_mode);
 	int disconnect_device();
-	
-	
-
+	 
 	int set_detect_mode(int value);
 	
 	int get_frame(vector<unsigned char> &image, int timeout = -5);
 	int get_detect_boxes(vector<struct http_output_detect_box> &detect_boxes, int timeout = -5);
+	int get_point_space_status(int x, int y, struct point_space_status &status);
+	
 	
 	int get_connect_state();
 	int get_reconnect_count();

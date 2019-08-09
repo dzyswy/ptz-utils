@@ -87,6 +87,14 @@ int daemon_stereo::get_detect_boxes(vector<struct http_output_detect_box> &detec
 	return 0;
 }
 
+int daemon_stereo::get_point_space_status(int x, int y, struct point_space_status &status)
+{
+	std::unique_lock<std::mutex> lock(mux_);
+	if (!sensor_)
+		return -1;
+	
+	return sensor_->get_point_space_status(x, y, status);
+}
 
 int daemon_stereo::get_connect_state()
 {
@@ -107,12 +115,12 @@ int daemon_stereo::get_reconnect_count()
 void daemon_stereo::stream_process()
 {
 	int ret;
-	int rebuild_flag = 0;
+	int reconnect_flag = 0;
 	while(1)
 	{
 		std::unique_lock<std::mutex> lock(mux_);
 		
-		if (rebuild_flag == 1) 
+		if (reconnect_flag == 1) 
 		{
 			sensor_->close_device();
 			delete sensor_;
@@ -128,7 +136,7 @@ void daemon_stereo::stream_process()
 		struct gyro_status status;
 		ret = sensor_->query_frame(frame_buffer_, detect_boxes, status, 5);
 		if (ret < 0) {
-			rebuild_flag = 1;
+			reconnect_flag = 1;
 			std::this_thread::sleep_for(std::chrono::seconds(3));
 		} else {
 			cond_.notify_all();

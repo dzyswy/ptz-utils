@@ -2,8 +2,11 @@
 #define __FIT_CALIB_H
 
 
-class ptz_ctl_visca;
-class daemon_stereo;
+
+#include "ptz_ctl_visca.h"
+#include "daemon_stereo.h"
+
+
 
 
 enum fit_calib_coord_type

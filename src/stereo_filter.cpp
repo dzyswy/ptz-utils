@@ -1,5 +1,5 @@
 #include "stereo_filter.h"
-#include "stream_receiver.h"
+
 
 
 static void handle_filter(void *arg)
@@ -21,7 +21,7 @@ stereo_filter::stereo_filter(daemon_stereo *stereo)
 	
 	memset(&now_target_state_count_, 0, sizeof(now_target_state_count_));
 	
-	position_stable_ = 0;
+	position_statble_count_ = 0;
 	stable_dist_ = 100;
 	target_position_buffer_.clear();
 	
@@ -77,6 +77,7 @@ void stereo_filter::filter_process()
 		 *	|-避免镜头大浮动摆动。
 		 * 3.目标位置是否稳定
 		 *	|-连续3帧之间的直线距离小于阈值，认为目标位置稳定。
+		 *	|-连续3帧之间的x和y轴的变化值都小于阈值，认为目标位置稳定。
 		*/
 		{
 			std::unique_lock<std::mutex> lock(mux_);
@@ -148,15 +149,24 @@ void stereo_filter::filter_process()
 					y[i] = target_position_buffer_[i].ycm;
 					z[i] = target_position_buffer_[i].zcm;
 				}	
-				float dist0 = sqrt((x[2] - x[0]) * (x[2] - x[0]) + (y[2] - y[0]) * (y[2] - y[0]) + (z[2] - z[0]) * (z[2] - z[0]));
-				float dist1 = sqrt((x[2] - x[1]) * (x[2] - x[1]) + (y[2] - y[1]) * (y[2] - y[1]) + (z[2] - z[1]) * (z[2] - z[1]));
-				dist = (dist0 + dist1) / 2;
+				float dist0 = fabs(x[2] - x[0]);
+				float dist1 = fabs(x[2] - x[1]);
+				float dist2 = fabs(y[2] - y[0]);
+				float dist3 = fabs(y[2] - y[1]);
+				dist = min(dist0, min(dist1, min(dist2, dist3)));
+				
+			//	float dist0 = sqrt((x[2] - x[0]) * (x[2] - x[0]) + (y[2] - y[0]) * (y[2] - y[0]) + (z[2] - z[0]) * (z[2] - z[0]));
+			//	float dist1 = sqrt((x[2] - x[1]) * (x[2] - x[1]) + (y[2] - y[1]) * (y[2] - y[1]) + (z[2] - z[1]) * (z[2] - z[1]));
+			//	dist = (dist0 + dist1) / 2;
 			}	
 			
-			if ((dist > 0) && (dist < stable_dist_))
-				position_stable_ = 1;
-			else
-				position_stable_ = 0;
+			if ((dist > 0) && (dist < stable_dist_)) {
+				position_statble_count_++;
+			} 
+			else {
+				position_statble_count_ = 0;
+			}
+				
 			
 		}
 				

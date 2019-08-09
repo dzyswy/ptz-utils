@@ -5,9 +5,7 @@
 
 
 
-
-class daemon_stereo;
-
+#include "daemon_stereo.h"
 
 
 
@@ -67,10 +65,10 @@ public:
 		return target_position_;
 	}
 	
-	int get_position_stable()
+	int get_position_statble_count()
 	{
 		std::unique_lock<std::mutex> lock(mux_);
-		return position_stable_;
+		return position_statble_count_;
 	}
 	
 	float get_stable_dist()
@@ -81,10 +79,7 @@ public:
 
 	void filter_process();
 
-
-protected:
-	
-	
+ 
 	
 protected:
 	daemon_stereo *stereo_;
@@ -103,7 +98,7 @@ protected:
 	int target_state_;
 	struct http_output_detect_box target_position_;
 	
-	int position_stable_;
+	int position_statble_count_;
 	float stable_dist_;
 	list<struct http_output_detect_box> target_position_buffer_;
 };
