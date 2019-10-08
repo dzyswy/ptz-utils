@@ -15,6 +15,8 @@ digraph class {
 	
 	ptz_track [label = "{ptz_track}"]
 	
+	pid_inc [label = "{pid_inc}"] 
+	
 	qt_gui [label = "{qt_gui}"]
 	
 	daemon_stereo -> stereo_sensor [arrowhead="normal", style="normal"]
@@ -24,6 +26,7 @@ digraph class {
 	ptz_track -> stereo_filter [arrowhead="normal", style="dashed"]
 	ptz_track -> ptz_ctl_visca [arrowhead="normal", style="dashed"]
 	ptz_track -> fit_calib [arrowhead="normal", style="dashed"]
+	ptz_track -> pid_inc [arrowhead="normal", style="normal"]
 	qt_gui -> ptz_ctl_visca [arrowhead="normal", style="dashed"]
 	qt_gui -> daemon_stereo [arrowhead="normal", style="dashed"]
 	qt_gui -> stereo_filter [arrowhead="normal", style="dashed"]
